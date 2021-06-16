@@ -1,3 +1,84 @@
+import useState from "react";
+import Axios from 'axios'
+import styled  from "styled-components"
+import { Header,AppNameComponent, SearchComponent,AppIcon,SearchIcon,SearchInput } from "./components/HeaderComponent";
+ import { RecipeListContainer,RecipeContainer,RecipeImage,RecipeName,IngredientsText,SeeMoreText } from "./components/RecipeSection";
+
+
+
+
+
+
+
+ const Appid=  "9f27879d";
+ const Appkey = "ac7b7b71d9211b03a83c8788ed0eaf61"	;
+ 
+const Container = styled.div`
+display: flex;
+flex-direction: column;
+`;
+const RecipeComponent = ()=>
+
+
+
+function App() {
+
+  const [timeOutId , updateTimeOutId] = useState()
+ 
+  const [recipeList, updateRecipeList] = useState([]);
+  const fetchData = async (searchString) => {
+    const response = await Axios.get(
+      `https://api.edamam.com/search?q=${searchString}&app_id=${APP_ID}&app_key=${APP_KEY}`,
+    );
+    updateRecipeList(response.data.hits);
+  };
+
+
+  // debouncing concept....
+  const onChangeText = (e) => {
+    clearTimeout(timeOutId);
+    // updateSearchQuery(e.target.value);
+    const timeout = setTimeout(() => fetchData(e.target.value), 500);
+    updateTimeOutId(timeout);
+  };
+    
+
+  }
+  return (
+    <>
+   <Container>
+     <Header>
+  
+   <AppNameComponent>
+   <AppIcon src="./images/logo1.jpg" alt="not " />
+   Recipe Finder
+   </AppNameComponent>
+   <SearchComponent>
+   <SearchIcon src="./images/search.png" alt="not a" />
+   <SearchInput type="text" placeholder="Search Recipe" onchange={onChangeText} />
+   </SearchComponent>
+     </Header>
+
+
+
+     <RecipeListContainer>
+     
+     {recipeList?.length ? (
+          recipeList.map((recipe, index) => (
+            <RecipeComponent key={index} recipe={recipe.recipe} />
+          ))
+        ) : (
+          <Placeholder src="/react-recipe-finder/hamburger.svg" />
+        )}
+
+    </RecipeListContainer>
+          </Container>     
+ </>
+ );
+}
+
+export default App;
+
 import React, { useState } from "react";
 import Axios from "axios";
 import styled from "styled-components";
@@ -60,7 +141,7 @@ const RecipeComponent = (props) => {
       >
         <DialogTitle>Ingredients</DialogTitle>
         <DialogContent>
-          <RecipeName>{label}</RecipeName>
+          <RecipeName></RecipeName>
           <table>
             <thead>
               <th>Ingredient</th>
@@ -157,44 +238,27 @@ const AppComponent = () => {
   const [searchQuery, updateSearchQuery] = useState("");
   const [recipeList, updateRecipeList] = useState([]);
   const [timeoutId, updateTimeoutId] = useState();
-  const fetchData = async (searchString) => {
-    const response = await Axios.get(
-      `https://api.edamam.com/search?q=${searchString}&app_id=${APP_ID}&app_key=${APP_KEY}`,
-    );
-    updateRecipeList(response.data.hits);
-  };
-
-  const onTextChangeUpdate = (e) => {
-    clearTimeout(timeoutId);
-    updateSearchQuery(e.target.value);
-    const timeout = setTimeout(() => fetchData(e.target.value), 500);
-    updateTimeoutId(timeout);
-  };
+ 
+ 
 
   return (
     <Container>
       <Header>
         <AppName>
-          <RecipeImage src="../images/hamburger.svg" />
+          <RecipeImage src="/react-recipe-finder/hamburger.svg" />
           Recipe Finder
         </AppName>
         <SearchBox>
-          <SearchIcon src="../images/search-icon.svg" />
+          <SearchIcon src="/react-recipe-finder/search-icon.svg" />
           <SearchInput
             placeholder="Search Recipe"
             value={searchQuery}
-            onChange={onTextChangeUpdate}
+            onChange={onTextChange}
           />
         </SearchBox>
       </Header>
       <RecipeListContainer>
-        {recipeList?.length ? (
-          recipeList.map((recipe, index) => (
-            <RecipeComponent key={index} recipe={recipe.recipe} />
-          ))
-        ) : (
-          <Placeholder src="../images/hamburger.svg" />
-        )}
+     
       </RecipeListContainer>
     </Container>
   );
